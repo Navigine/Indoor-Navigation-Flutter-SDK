@@ -1,4 +1,4 @@
-# navigine_sdk
+# Navigine Flutter SDK
 
 A flutter plugin for navigine sdk on iOS and Android.
 
