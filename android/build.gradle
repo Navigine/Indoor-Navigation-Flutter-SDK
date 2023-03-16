@@ -1,0 +1,35 @@
+group 'com.navigine.naviginesdk'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.1.3'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://www.jitpack.io' }
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 31
+
+    defaultConfig {
+        minSdkVersion 21
+    }
+}
+
+dependencies {
+   implementation 'com.github.Navigine:Indoor-Navigation-Android-Mobile-SDK-2.0:20230213'
+}
