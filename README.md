@@ -13,6 +13,14 @@ A flutter plugin for navigine sdk on iOS and Android.
 |-------------|---------|---------|
 | __Support__ | SDK 21+ | iOS 12+ |
 
+### Useful links:
+1. [SDK Documentation](https://github.com/Navigine/Indoor-Navigation-Android-Mobile-SDK-2.0/wiki)
+2. Refer to the [Navigine official documentation](https://navigine.com/documentation/) for complete list of downloads, useful materials, information about the company, and so on.
+3. [Get started](http://locations.navigine.com/login) with Navigine to get full access to Navigation services, SDKs, and applications.
+4. Refer to the Navigine [User Manual](http://docs.navigine.com/) for complete product usage guidelines.
+5. Find company contact information at the official website under [Contact](https://navigine.com/contacts/) tab.
+6. Find information about Navigine’s Open Source Initiative [here](https://navigine.com/open-source/)
+
 ## Getting Started
 
 ### Generate your User Hash
@@ -89,10 +97,3 @@ public class MainActivity extends FlutterActivity {
 
 For usage examples refer to example [app](https://github.com/Navigine/Indoor-Navigation-Flutter-SDK/tree/master/example)
 
-### Useful links:
-1. [SDK Documentation](https://github.com/Navigine/Indoor-Navigation-Android-Mobile-SDK-2.0/wiki)
-2. Refer to the [Navigine official documentation](https://navigine.com/documentation/) for complete list of downloads, useful materials, information about the company, and so on.
-3. [Get started](http://locations.navigine.com/login) with Navigine to get full access to Navigation services, SDKs, and applications.
-4. Refer to the Navigine [User Manual](http://docs.navigine.com/) for complete product usage guidelines.
-5. Find company contact information at the official website under [Contact](https://navigine.com/contacts/) tab.
-6. Find information about Navigine’s Open Source Initiative [here](https://navigine.com/open-source/)
