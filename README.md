@@ -89,7 +89,7 @@ public class MainActivity extends FlutterActivity {
 
 For usage examples refer to example [app](https://github.com/Navigine/Indoor-Navigation-Flutter-SDK/tree/master/example)
 
-Useful links:
+### Useful links:
 1. [SDK Documentation](https://github.com/Navigine/Indoor-Navigation-Android-Mobile-SDK-2.0/wiki)
 2. Refer to the [Navigine official documentation](https://navigine.com/documentation/) for complete list of downloads, useful materials, information about the company, and so on.
 3. [Get started](http://locations.navigine.com/login) with Navigine to get full access to Navigation services, SDKs, and applications.
