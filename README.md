@@ -1,6 +1,6 @@
 # Navigine Flutter SDK
 
-![flutter_img_1.png](https://github.com/Navigine/Indoor-Navigation-Flutter-SDK/blob/main/img/flutter_img_1.png)
+<p align="center"><img  width="100%"src=https://github.com/Navigine/Indoor-Navigation-Flutter-SDK/blob/main/img/flutter_img_1.png></p>
 
 
 **What is Flutter?**
