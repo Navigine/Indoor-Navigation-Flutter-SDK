@@ -1,6 +1,6 @@
 # navigine_sdk_example
 
-[Flutter_example](https://github.com/Navigine/Indoor-Navigation-Flutter-SDK/blob/main/img/flutter_img_2.png)
+![Flutter_example](https://github.com/Navigine/Indoor-Navigation-Flutter-SDK/blob/main/img/flutter_img_2.png)
 
 Demonstrates how to use the navigine_sdk plugin.
 
