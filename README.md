@@ -23,6 +23,8 @@ A flutter plugin for navigine sdk on iOS and Android.
 
 ## Values and benefits
 
+<p align="center"><img  width="100%" height="100%" src=https://github.com/Navigine/Indoor-Navigation-Flutter-SDK/blob/main/img/Flutter.jpg></p>
+
 Flutter is a versatile platform that can be used in many industries, including retail, healthcare, logistics, transportation, and hospitality. The Navigine SDK for Flutter can provide businesses with accurate indoor positioning and tracking to improve their operations and provide a better experience for their customers.
 
 In retail, Flutter with Navigine SDK can be used to create indoor navigation and wayfinding solutions for shopping malls, supermarkets, and other large stores, making it easier for customers to find products and leading to increased sales.
