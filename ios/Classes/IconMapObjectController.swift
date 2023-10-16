@@ -19,9 +19,9 @@ class IconMapObjectController: NSObject {
         if locationView == nil {
             return nil
         }
-        let iconMapObject = locationView!.addIconMapObject()
-        let iconMapObjectId = iconMapObject.getId()
-        mapObjects[iconMapObjectId] = NavigineIconMapObject(id: iconMapObjectId, mapObject: iconMapObject, registrar: self.pluginRegistrar)
+        let iconMapObject = locationView!.locationWindow.addIconMapObject()
+        let iconMapObjectId = iconMapObject!.getId()
+        mapObjects[iconMapObjectId] = NavigineIconMapObject(id: iconMapObjectId, mapObject: iconMapObject!, registrar: self.pluginRegistrar)
         return iconMapObjectId
 
     }
@@ -35,7 +35,7 @@ class IconMapObjectController: NSObject {
             return false
         }
         
-        let success = locationView?.remove((iconMapObject?.getMapObject())!);
+        let success = locationView?.locationWindow.remove((iconMapObject?.getMapObject())!);
         mapObjects.removeValue(forKey: id)
         return success
     }

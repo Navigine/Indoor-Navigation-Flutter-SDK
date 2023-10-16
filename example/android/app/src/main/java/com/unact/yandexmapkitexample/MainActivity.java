@@ -9,10 +9,12 @@ import com.navigine.idl.java.NavigineSdk;
 import com.navigine.sdk.Navigine;
 
 public class MainActivity extends FlutterActivity {
+  private NavigineSdk sdk;
   @Override
   public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
     Navigine.initialize(getApplicationContext());
-    NavigineSdk.setUserHash("Your user hash");
+    sdk = NavigineSdk.getInstance();
+    sdk.setUserHash("Your user hash");
     super.configureFlutterEngine(flutterEngine);
   }
 }

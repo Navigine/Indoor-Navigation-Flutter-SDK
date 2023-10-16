@@ -50,9 +50,9 @@ public class RouteManager: NSObject, FlutterPlugin {
         let params = call.arguments as! [String: Any]
         let sessionId = params["sessionId"] as! Int
         let locationPoint = Utils.locationPointFromJson(params["locationPoint"] as! [String : Any])
-        let smoothRadius = params["smoothRadius"] as! NSNumber
+        let routeOptions = Utils.routeOptionsFromJson(params["routeOptions"] as! [String : Any])
 
-        let session = self.asyncRouteManager.createRouteSession(locationPoint, smoothRadius: smoothRadius.floatValue)
+        let session = self.asyncRouteManager.createRouteSession(locationPoint, routeOptions: routeOptions)
 
         routeSessions[sessionId] = NavigineRouteSession(
           id: sessionId,

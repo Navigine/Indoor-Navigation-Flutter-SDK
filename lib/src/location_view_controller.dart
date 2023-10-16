@@ -151,8 +151,10 @@ class LocationViewController extends ChangeNotifier {
 
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     switch (call.method) {
-      case 'onSingleTap':
-        return _onSingleTap(call.arguments);
+      case 'onTap':
+        return _onTap(call.arguments);
+      case 'onDoubleTap':
+        return _onDoubleTap(call.arguments);
       case 'onLongTap':
         return _onLongTap(call.arguments);
       case 'onMapObjectPick':
@@ -166,11 +168,18 @@ class LocationViewController extends ChangeNotifier {
     }
   }
 
-  void _onSingleTap(dynamic arguments) {
-    if (_locationViewState.widget.onSingleTap == null) {
+  void _onTap(dynamic arguments) {
+    if (_locationViewState.widget.onTap == null) {
       return;
     }
-    _locationViewState.widget.onSingleTap!(Point._fromJson(arguments['location']));
+    _locationViewState.widget.onTap!(Point._fromJson(arguments['location']));
+  }
+
+  void _onDoubleTap(dynamic arguments) {
+    if (_locationViewState.widget.onDoubleTap == null) {
+      return;
+    }
+    _locationViewState.widget.onDoubleTap!(Point._fromJson(arguments['location']));
   }
 
   void _onLongTap(dynamic arguments) {

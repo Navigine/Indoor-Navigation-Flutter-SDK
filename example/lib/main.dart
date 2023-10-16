@@ -6,10 +6,10 @@ void main() {
   runApp(MaterialApp(home: MainPage()));
 }
 
-int LOCATION_ID = 123; // Put here your location id
-int SUBLOCATION_ID = 345;  // Put here your sublocation id
+int LOCATION_ID = 0; // Put here your location id
+int SUBLOCATION_ID = 0;  // Put here your sublocation id
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatelessWidget with WidgetsBindingObserver {
   Future<bool> get locationPermissionNotGranted async => !(await Permission.location.request().isGranted);
   Future<bool> get bluetoothscanPermissionNotGranted async => !(await Permission.bluetoothScan.request().isGranted);
   Future<bool> get bluetoothPermissionNotGranted async => !(await Permission.bluetoothConnect.request().isGranted);
@@ -20,6 +20,8 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     var locationManager = LocationManager.init();
     locationManager.setListener(LocationListener(
       onLocationLoaded: (location) {
@@ -46,7 +48,10 @@ class MainPage extends StatelessWidget {
     navigationManager.stopLogRecording();
 
     var routeManager = RouteManager.init();
-    var routeSession = routeManager.createRouteSession(LocationPoint(point: Point(x: 100.0, y: 200.0), locationId: LOCATION_ID, sublocationId: SUBLOCATION_ID), 0.3);
+    var routeSession = routeManager.createRouteSession(
+      LocationPoint(point: Point(x: 100.0, y: 200.0), locationId: LOCATION_ID, sublocationId: SUBLOCATION_ID),
+      RouteOptions(smoothRadius: 0.3, maxProjectionDistance: 1.0, maxAdvance: 1.0));
+
     routeSession.setListener(RouteListener(
       onRouteAdvanced: (distance, point) async {
         print('onRouteAdvanced');
@@ -122,11 +127,15 @@ class MainPage extends StatelessWidget {
                   final screenMeters = await viewController?.metersToScreenPosition(pointMeters!, false);
                   await viewController?.flyToCamera(Camera(point: pointMeters!, zoom: 11, rotation: 0), 2);
                 },
-                onSingleTap: (Point point) {
-                  print('onSingleTap');
+                onTap: (Point point) {
+                  print('onTap');
                   print(point);
                   viewController?.pickMapObjectAt(point);
                   viewController?.pickMapFeatureAt(point);
+                },
+                onDoubleTap: (Point point) {
+                  print('onDoubleTap');
+                  print(point);
                 },
                 onCameraAnimation: (finished) {
                   print(finished);

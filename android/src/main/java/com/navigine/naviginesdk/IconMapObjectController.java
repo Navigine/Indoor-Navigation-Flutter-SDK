@@ -3,7 +3,7 @@ package com.navigine.naviginesdk;
 import android.content.Context;
 
 import com.navigine.idl.java.IconMapObject;
-import com.navigine.view.LocationViewController;
+import com.navigine.idl.java.LocationWindow;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,22 +13,22 @@ import io.flutter.plugin.common.BinaryMessenger;
 public class IconMapObjectController {
   private final BinaryMessenger binaryMessenger;
   private final Context context;
-  private final LocationViewController controller;
+  private final LocationWindow locationWindow;
   private final Map<Integer, NavigineIconMapObject> mapObjects = new HashMap<>();
 
   @SuppressWarnings({"ConstantConditions", "unchecked"})
   public IconMapObjectController(
           BinaryMessenger messenger,
           Context context,
-          LocationViewController controller
+          LocationWindow locationWindow
   ) {
     this.binaryMessenger = messenger;
     this.context = context;
-    this.controller = controller;
+    this.locationWindow = locationWindow;
   }
 
   public int addIconMapObject() {
-    IconMapObject iconMapObject = controller.addIconMapObject();
+    IconMapObject iconMapObject = locationWindow.addIconMapObject();
     int iconMapObjectId = iconMapObject.getId();
     NavigineIconMapObject navigineIconMapObject = new NavigineIconMapObject(
             iconMapObjectId,
@@ -46,7 +46,7 @@ public class IconMapObjectController {
       return false;
     }
 
-    boolean success = controller.removeIconMapObject(iconMapObject.getMapObject());
+    boolean success = locationWindow.removeIconMapObject(iconMapObject.getMapObject());
     mapObjects.remove(id);
     return success;
   }

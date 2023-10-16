@@ -39,6 +39,13 @@ class Utils {
             sublocationId: (json["sublocationId"] as! NSNumber).int32Value
         )
     }
+    
+    static func routeOptionsFromJson(_ json: [String: Any]) -> NCRouteOptions {
+        return NCRouteOptions(
+            smoothRadius: (json["smoothRadius"] as! NSNumber),
+            maxProjectionDistance: (json["maxProjectionDistance"] as! NSNumber),
+            maxAdvance: (json["maxAdvance"] as! NSNumber))
+    }
 
     static func cameraFromJson(_ json: [String: Any]) -> NCCamera {
         return NCCamera(

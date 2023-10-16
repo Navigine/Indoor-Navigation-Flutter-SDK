@@ -40,6 +40,7 @@ part 'src/types/point.dart';
 part 'src/types/polyline.dart';
 part 'src/types/position.dart';
 part 'src/types/route_event.dart';
+part 'src/types/route_options.dart';
 part 'src/types/route_path.dart';
 part 'src/types/route_session.dart';
 part 'src/types/sublocation.dart';

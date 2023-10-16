@@ -9,7 +9,9 @@ import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.navigine.idl.java.AnimationType;
 import com.navigine.idl.java.Camera;
+import com.navigine.idl.java.InputListener;
 import com.navigine.idl.java.MapObjectPickResult;
 import com.navigine.idl.java.PickListener;
 import com.navigine.idl.java.Point;
@@ -77,39 +79,42 @@ public class LocationViewController implements
       locationView = new LocationView(context);
     }
 
-    circleMapObjectController = new CircleMapObjectController(messenger, context, locationView.getLocationViewController());
-    iconMapObjectController = new IconMapObjectController(messenger, context, locationView.getLocationViewController());
-    polylineMapObjectController = new PolylineMapObjectController(messenger, context, locationView.getLocationViewController());
+    circleMapObjectController = new CircleMapObjectController(messenger, context, locationView.getLocationWindow());
+    iconMapObjectController = new IconMapObjectController(messenger, context, locationView.getLocationWindow());
+    polylineMapObjectController = new PolylineMapObjectController(messenger, context, locationView.getLocationWindow());
 
     methodChannel = new MethodChannel(messenger, "navigine_sdk/navigine_map_" + id);
     methodChannel.setMethodCallHandler(this);
 
     locationView.addOnLayoutChangeListener(this);
 
-    locationView.getLocationViewController().getTouchInput().setTapResponder(new TouchInput.TapResponder() {
+    locationView.getLocationWindow().addInputListener(new InputListener() {
       @Override
-      public boolean onSingleTapUp(float v, float v1) {
-        return false;
-      }
-
-      @Override
-      public boolean onSingleTapConfirmed(float x, float y) {
+      public void onViewTap(PointF pointF) {
         Map<String, Object> arguments = new HashMap<>();
-        arguments.put("location", Utils.screenPointToJson(new PointF(x, y)));
+        arguments.put("location", Utils.screenPointToJson(pointF));
 
-        methodChannel.invokeMethod("onSingleTap", arguments);
-        return false;
+        methodChannel.invokeMethod("onTap", arguments);
+      }
+
+      @Override
+      public void onViewDoubleTap(PointF pointF) {
+        Map<String, Object> arguments = new HashMap<>();
+        arguments.put("location", Utils.screenPointToJson(pointF));
+
+        methodChannel.invokeMethod("onDoubleTap", arguments);
+      }
+
+      @Override
+      public void onViewLongTap(PointF pointF) {
+        Map<String, Object> arguments = new HashMap<>();
+        arguments.put("location", Utils.screenPointToJson(pointF));
+
+        methodChannel.invokeMethod("onLongTap", arguments);
       }
     });
 
-    locationView.getLocationViewController().getTouchInput().setLongPressResponder((x, y) -> {
-      Map<String, Object> arguments = new HashMap<>();
-      arguments.put("location", Utils.screenPointToJson(new PointF(x, y)));
-
-      methodChannel.invokeMethod("onLongTap", arguments);
-    });
-
-    locationView.getLocationViewController().setPickListener(new PickListener() {
+    locationView.getLocationWindow().addPickListener(new PickListener() {
       @Override
       public void onMapObjectPickComplete(MapObjectPickResult mapObjectPickResult, PointF screenPosition) {
         if (mapObjectPickResult == null) {
@@ -251,12 +256,12 @@ public class LocationViewController implements
   public void setSublocationId(MethodCall call) {
     Map<String, Object> params = ((Map<String, Object>) call.arguments);
 
-    locationView.getLocationViewController().setSublocationId((Integer) params.get("sublocationId"));
+    locationView.getLocationWindow().setSublocationId((Integer) params.get("sublocationId"));
   }
 
   @SuppressWarnings({"unchecked", "ConstantConditions"})
   public void removeAllMapObjects() {
-    locationView.getLocationViewController().removeAllMapObjects();
+    locationView.getLocationWindow().removeAllMapObjects();
   }
 
   @SuppressWarnings({"unchecked", "ConstantConditions"})
@@ -297,7 +302,7 @@ public class LocationViewController implements
     Map<String, Object> params = (Map<String, Object>) call.arguments;
 
     PointF screenPoint = Utils.screenPointFromJson((Map<String, Object>) params.get("point"));
-    return Utils.pointToJson(locationView.getLocationViewController().screenPositionToMeters(screenPoint));
+    return Utils.pointToJson(locationView.getLocationWindow().screenPositionToMeters(screenPoint));
   }
 
   @SuppressWarnings({"unchecked", "ConstantConditions"})
@@ -307,7 +312,7 @@ public class LocationViewController implements
     Point point = Utils.pointFromJson((Map<String, Object>) params.get("point"));
 
     Boolean clip = (Boolean)params.get("clip");
-    return Utils.screenPointToJson(locationView.getLocationViewController().metersToScreenPosition(point, clip));
+    return Utils.screenPointToJson(locationView.getLocationWindow().metersToScreenPosition(point, clip));
   }
 
   @SuppressWarnings({"unchecked", "ConstantConditions"})
@@ -316,7 +321,7 @@ public class LocationViewController implements
 
     PointF point = Utils.screenPointFromJson((Map<String, Object>) params.get("point"));
 
-    locationView.getLocationViewController().pickMapObjectAt(point.x, point.y);
+    locationView.getLocationWindow().pickMapObjectAt(point);
   }
 
   @SuppressWarnings({"unchecked", "ConstantConditions"})
@@ -325,13 +330,13 @@ public class LocationViewController implements
 
     PointF point = Utils.screenPointFromJson((Map<String, Object>) params.get("point"));
 
-    locationView.getLocationViewController().pickMapFeaturetAt(point.x, point.y);
+    locationView.getLocationWindow().pickMapFeatureAt(point);
   }
 
   @SuppressWarnings({"unchecked", "ConstantConditions"})
   public void applyFilter(MethodCall call) {
     Map<String, Object> params = (Map<String, Object>) call.arguments;
-    locationView.getLocationViewController().applyFilter(
+    locationView.getLocationWindow().applyFilter(
             (String) params.get("filter"),
             (String) params.get("layer"));
   }
@@ -340,47 +345,47 @@ public class LocationViewController implements
   public void setMinZoomFactor(MethodCall call) {
     Map<String, Object> params = (Map<String, Object>) call.arguments;
     Double minZoomFactor = (Double) params.get("minZoomFactor");
-    locationView.getLocationViewController().setMinZoomFactor(minZoomFactor.floatValue());
+    locationView.getLocationWindow().setMinZoomFactor(minZoomFactor.floatValue());
   }
 
   @SuppressWarnings({"unchecked", "ConstantConditions"})
   public float getMinZoomFactor(MethodCall call) {
-    return locationView.getLocationViewController().getMinZoomFactor();
+    return locationView.getLocationWindow().getMinZoomFactor();
   }
 
   @SuppressWarnings({"unchecked", "ConstantConditions"})
   public void setMaxZoomFactor(MethodCall call) {
     Map<String, Object> params = (Map<String, Object>) call.arguments;
     Double maxZoomFactor = (Double) params.get("maxZoomFactor");
-    locationView.getLocationViewController().setMaxZoomFactor(maxZoomFactor.floatValue());
+    locationView.getLocationWindow().setMaxZoomFactor(maxZoomFactor.floatValue());
   }
 
   @SuppressWarnings({"unchecked", "ConstantConditions"})
   public float getMaxZoomFactor(MethodCall call) {
-    return locationView.getLocationViewController().getMaxZoomFactor();
+    return locationView.getLocationWindow().getMaxZoomFactor();
   }
 
   @SuppressWarnings({"unchecked", "ConstantConditions"})
   public void setZoomFactor(MethodCall call) {
     Map<String, Object> params = (Map<String, Object>) call.arguments;
     Double zoomFactor = (Double) params.get("zoomFactor");
-    locationView.getLocationViewController().setZoomFactor(zoomFactor.floatValue());
+    locationView.getLocationWindow().setZoomFactor(zoomFactor.floatValue());
   }
 
   @SuppressWarnings({"unchecked", "ConstantConditions"})
   public float getZoomFactor(MethodCall call) {
-    return locationView.getLocationViewController().getZoomFactor();
+    return locationView.getLocationWindow().getZoomFactor();
   }
 
   @SuppressWarnings({"unchecked", "ConstantConditions"})
   public void setCamera(MethodCall call) {
     Map<String, Object> params = (Map<String, Object>) call.arguments;
-    locationView.getLocationViewController().setCamera(Utils.cameraFromJson((Map<String, Object>) params.get("camera")));
+    locationView.getLocationWindow().setCamera(Utils.cameraFromJson((Map<String, Object>) params.get("camera")));
   }
 
   @SuppressWarnings({"unchecked", "ConstantConditions"})
   public Map<String, Object> getCamera(MethodCall call) {
-    return Utils.cameraToJson(locationView.getLocationViewController().getCamera());
+    return Utils.cameraToJson(locationView.getLocationWindow().getCamera());
   }
 
   @SuppressWarnings({"unchecked", "ConstantConditions"})
@@ -388,17 +393,7 @@ public class LocationViewController implements
     Map<String, Object> params = (Map<String, Object>) call.arguments;
     Camera camera = Utils.cameraFromJson((Map<String, Object>) params.get("camera"));
     Integer duration = (Integer) params.get("duration");
-    locationView.getLocationViewController().flyToCamera(camera, duration * 1000, new com.navigine.view.LocationViewController.CameraAnimationCallback() {
-      @Override
-      public void onFinish() {
-
-      }
-
-      @Override
-      public void onCancel() {
-
-      }
-    });
+    locationView.getLocationWindow().flyTo(camera, duration, AnimationType.NONE, null);
   }
 
   @Override

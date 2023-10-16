@@ -19,9 +19,9 @@ class PolylineMapObjectController: NSObject {
         if locationView == nil {
             return nil
         }
-        let polylineMapObject = locationView!.addPolylineMapObject()
-        let polylineMapObjectId = polylineMapObject.getId()
-        mapObjects[polylineMapObjectId] = NaviginePolylineMapObject(id: polylineMapObjectId, mapObject: polylineMapObject, registrar: self.pluginRegistrar)
+        let polylineMapObject = locationView!.locationWindow.addPolylineMapObject()
+        let polylineMapObjectId = polylineMapObject!.getId()
+        mapObjects[polylineMapObjectId] = NaviginePolylineMapObject(id: polylineMapObjectId, mapObject: polylineMapObject!, registrar: self.pluginRegistrar)
         return polylineMapObjectId
 
     }
@@ -35,7 +35,7 @@ class PolylineMapObjectController: NSObject {
             return false
         }
 
-        let success = locationView?.remove((polylineMapObject?.getMapObject())!);
+        let success = locationView?.locationWindow.remove((polylineMapObject?.getMapObject())!);
         mapObjects.removeValue(forKey: id)
         return success
     }

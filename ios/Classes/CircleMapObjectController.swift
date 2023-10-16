@@ -19,9 +19,9 @@ class CircleMapObjectController: NSObject {
         if locationView == nil {
             return nil
         }
-        let circleMapObject = locationView!.addCircleMapObject()
-        let circleMapObjectId = circleMapObject.getId()
-        mapObjects[circleMapObjectId] = NavigineCircleMapObject(id: circleMapObjectId, mapObject: circleMapObject, registrar: self.pluginRegistrar)
+        let circleMapObject = locationView!.locationWindow.addCircleMapObject()
+        let circleMapObjectId = circleMapObject!.getId()
+        mapObjects[circleMapObjectId] = NavigineCircleMapObject(id: circleMapObjectId, mapObject: circleMapObject!, registrar: self.pluginRegistrar)
         return circleMapObjectId
 
     }
@@ -35,7 +35,7 @@ class CircleMapObjectController: NSObject {
             return false
         }
 
-        let success = locationView?.remove((circleMapObject?.getMapObject())!);
+        let success = locationView?.locationWindow.remove((circleMapObject?.getMapObject())!);
         mapObjects.removeValue(forKey: id)
         return success
     }

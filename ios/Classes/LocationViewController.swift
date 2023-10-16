@@ -7,7 +7,7 @@ public class LocationViewController:
     NSObject,
     FlutterPlatformView,
     NCPickListener,
-    NCGestureRecognizerDelegate
+    NCInputListener
 {
     public let methodChannel: FlutterMethodChannel!
     public let pluginRegistrar: FlutterPluginRegistrar!
@@ -33,8 +33,8 @@ public class LocationViewController:
         weak var weakSelf = self
         self.methodChannel.setMethodCallHandler({ weakSelf?.handle($0, result: $1) })
 
-        self.locationView.pickListener = self
-        self.locationView.gestureDelegate = self
+        self.locationView.locationWindow.add(self as NCPickListener)
+        self.locationView.locationWindow.add(self as NCInputListener)
     }
 
     public func view() -> UIView {
@@ -111,11 +111,11 @@ public class LocationViewController:
     public func setSublocationId(_ call: FlutterMethodCall) {
         let params = call.arguments as! [String: Any]
 
-        locationView.setSublocationId(params["sublocationId"] as! Int32)
+        locationView.locationWindow.setSublocationId(params["sublocationId"] as! Int32)
     }
 
     public func removeAllMapObjects(_ call: FlutterMethodCall) {
-        locationView.removeAllMapObjects()
+        locationView.locationWindow.removeAllMapObjects()
     }
 
     public func addCircleMapObject(_ call: FlutterMethodCall) -> Int32? {
@@ -148,7 +148,7 @@ public class LocationViewController:
     public func screenPositionToMeters(_ call: FlutterMethodCall) -> [String: Any?] {
         let params = call.arguments as! [String: Any]
         let screenPoint = Utils.screenPointFromJson(params["point"] as! [String: NSNumber])
-        return Utils.pointToJson(locationView.screenPosition(toMeters: screenPoint))
+        return Utils.pointToJson(locationView.locationWindow.screenPosition(toMeters: screenPoint))
     }
 
     public func metersToScreenPosition(_ call: FlutterMethodCall) -> [String: Any?] {
@@ -156,68 +156,68 @@ public class LocationViewController:
 
         let point = Utils.pointFromJson(params["point"] as! [String: NSNumber])
         let clip = params["clip"] as! Bool
-        return Utils.screenPointToJson(locationView.meters(toScreenPosition: point, clipToViewport: clip))
+        return Utils.screenPointToJson(locationView.locationWindow.meters(toScreenPosition: point, clipToViewport: clip))
     }
 
     public func pickMapObjectAt(_ call: FlutterMethodCall) {
         let params = call.arguments as! [String: Any]
-        locationView.pickMapObject(at: Utils.screenPointFromJson(params["point"] as! [String: NSNumber]))
+        locationView.locationWindow.pickMapObject(at: Utils.screenPointFromJson(params["point"] as! [String: NSNumber]))
     }
 
     public func pickMapFeatureAt(_ call: FlutterMethodCall) {
         let params = call.arguments as! [String: Any]
-        locationView.pickMapFeature(at: Utils.screenPointFromJson(params["point"] as! [String: NSNumber]))
+        locationView.locationWindow.pickMapFeature(at: Utils.screenPointFromJson(params["point"] as! [String: NSNumber]))
     }
 
     public func applyFilter(_ call: FlutterMethodCall) {
         let params = call.arguments as! [String: Any]
-        locationView.applyFilter(params["filter"] as! String, layer: params["layer"] as! String)
+        locationView.locationWindow.applyFilter(params["filter"] as! String, layer: params["layer"] as! String)
     }
 
     public func setMinZoomFactor(_ call: FlutterMethodCall) {
         let params = call.arguments as! [String: Any]
-        let minZoomFactor = params["minZoomFactor"] as! Double
-        locationView.minZoomFactor = minZoomFactor
+        let minZoomFactor = params["minZoomFactor"] as! Float
+        locationView.locationWindow.minZoomFactor = minZoomFactor
     }
 
     public func getMinZoomFactor(_ call: FlutterMethodCall) -> Float {
-        return Float(locationView.minZoomFactor)
+        return Float(locationView.locationWindow.minZoomFactor)
     }
 
     public func setMaxZoomFactor(_ call: FlutterMethodCall) {
         let params = call.arguments as! [String: Any]
-        let maxZoomFactor = params["maxZoomFactor"] as! Double
-        locationView.maxZoomFactor = maxZoomFactor
+        let maxZoomFactor = params["maxZoomFactor"] as! Float
+        locationView.locationWindow.maxZoomFactor = maxZoomFactor
     }
 
     public func getMaxZoomFactor(_ call: FlutterMethodCall) -> Float {
-        return Float(locationView.maxZoomFactor)
+        return Float(locationView.locationWindow.maxZoomFactor)
     }
 
     public func setZoomFactor(_ call: FlutterMethodCall) {
         let params = call.arguments as! [String: Any]
-        let zoomFactor = params["zoomFactor"] as! Double
-        locationView.zoomFactor = zoomFactor
+        let zoomFactor = params["zoomFactor"] as! Float
+        locationView.locationWindow.zoomFactor = zoomFactor
     }
 
     public func getZoomFactor(_ call: FlutterMethodCall) -> Float {
-        return Float(locationView.zoomFactor)
+        return Float(locationView.locationWindow.zoomFactor)
     }
 
     public func setCamera(_ call: FlutterMethodCall) {
         let params = call.arguments as! [String: Any]
-        locationView.camera = Utils.cameraFromJson(params["camera"] as! [String: Any])
+        locationView.locationWindow.camera = Utils.cameraFromJson(params["camera"] as! [String: Any])
     }
 
     public func getCamera(_ call: FlutterMethodCall) -> [String: Any?] {
-        return Utils.cameraToJson(locationView.camera)
+        return Utils.cameraToJson(locationView.locationWindow.camera)
     }
 
     public func flyToCamera(_ call: FlutterMethodCall) {
         let params = call.arguments as! [String: Any]
         let camera = Utils.cameraFromJson(params["camera"] as! [String: Any])
         let duration = params["duration"] as! NSNumber
-        locationView.fly(to: camera, withDuration: duration.doubleValue) { finished in
+        locationView.locationWindow.fly(to: camera, duration: duration.int32Value, animationType: NCAnimationType.none) { finished in
             let arguments: [String: Bool] = [
                 "finished": finished
             ]
@@ -268,24 +268,23 @@ public class LocationViewController:
         methodChannel.invokeMethod("onMapFeaturePick", arguments: arguments)
     }
 
-    public func locationView(_ view: NCLocationView!, recognizer: UIGestureRecognizer!, didRecognizeSingleTapGesture location: CGPoint) {
+    public func onViewTap(_ screenPoint: CGPoint) {
         let arguments: [String: Any?] = [
-            "location": Utils.screenPointToJson(location)
+            "location": Utils.screenPointToJson(screenPoint)
         ]
-        methodChannel.invokeMethod("onSingleTap", arguments: arguments)
+        methodChannel.invokeMethod("onTap", arguments: arguments)
     }
 
-    public func locationView(_ view: NCLocationView!, recognizer: UIGestureRecognizer!, didRecognizePanGesture displacement: CGPoint) {
-
-    }
-
-    public func locationView(_ view: NCLocationView!, recognizer: UIGestureRecognizer!, didRecognizePinchGesture location: CGPoint) {
-
-    }
-
-    public func locationView(_ view: NCLocationView!, recognizer: UIGestureRecognizer!, didRecognizeLongPressGesture location: CGPoint) {
+    public func onViewDoubleTap(_ screenPoint: CGPoint) {
         let arguments: [String: Any?] = [
-            "location": Utils.screenPointToJson(location)
+            "location": Utils.screenPointToJson(screenPoint)
+        ]
+        methodChannel.invokeMethod("onDoubleTap", arguments: arguments)
+    }
+
+    public func onViewLongTap(_ screenPoint: CGPoint) {
+        let arguments: [String: Any?] = [
+            "location": Utils.screenPointToJson(screenPoint)
         ]
         methodChannel.invokeMethod("onLongTap", arguments: arguments)
     }

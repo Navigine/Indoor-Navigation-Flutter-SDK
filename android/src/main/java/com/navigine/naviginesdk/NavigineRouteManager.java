@@ -12,6 +12,7 @@ import com.navigine.idl.java.LocationManager;
 import com.navigine.idl.java.NavigationManager;
 import com.navigine.idl.java.Position;
 import com.navigine.idl.java.PositionListener;
+import com.navigine.idl.java.RouteOptions;
 import com.navigine.idl.java.RouteSession;
 
 import java.util.ArrayList;
@@ -66,8 +67,9 @@ public class NavigineRouteManager implements MethodCallHandler {
     Map<String, Object> params = ((Map<String, Object>) call.arguments);
     Integer sessionId = (Integer) params.get("sessionId");
     LocationPoint locationPoint = Utils.locationPointFromJson((Map<String, Object>) params.get("locationPoint"));
-    Double smoothRadius = (Double)params.get("smoothRadius");
-    RouteSession session = asyncRouteManager.createRouteSession(locationPoint, smoothRadius.floatValue());
+    RouteOptions routeOptions = Utils.routeOptionsFromJson((Map<String, Object>) params.get("routeOptions"));
+
+    RouteSession session = asyncRouteManager.createRouteSession(locationPoint, routeOptions);
 
     NavigineRouteSession routeSession = new NavigineRouteSession(
       sessionId,

@@ -14,6 +14,7 @@ import com.navigine.idl.java.Point;
 import com.navigine.idl.java.Polyline;
 import com.navigine.idl.java.Position;
 import com.navigine.idl.java.RouteEvent;
+import com.navigine.idl.java.RouteOptions;
 import com.navigine.idl.java.RoutePath;
 import com.navigine.idl.java.Sublocation;
 import com.navigine.idl.java.Venue;
@@ -59,6 +60,13 @@ public class Utils {
 
   public static Camera cameraFromJson(Map<String, Object> json) {
     return new Camera(pointFromJson((Map<String, Object>) json.get("point")), ((Double) json.get("zoom")).floatValue(), ((Double) json.get("rotation")).floatValue());
+  }
+
+  public static RouteOptions routeOptionsFromJson(Map<String, Object> json) {
+    return new RouteOptions(
+            (Double) json.get("smoothRadius"),
+            (Double)json.get("maxProjectionDistance"),
+            (Double)json.get("maxAdvance"));
   }
 
   public static Map<String, Object> locationInfoToJson(LocationInfo locationInfo) {

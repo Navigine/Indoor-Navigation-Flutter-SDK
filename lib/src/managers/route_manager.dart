@@ -14,12 +14,12 @@ class RouteManager {
     return RouteManager._(methodChannel);
   }
 
-  RouteSession createRouteSession(LocationPoint locationPoint, double smoothRadius) {
+  RouteSession createRouteSession(LocationPoint locationPoint, RouteOptions routeOptions) {
     int sessionId = _nextSessionId++;
     _channel.invokeMethod(
       'createRouteSession', {
         'locationPoint' : locationPoint.toJson(),
-        'smoothRadius' : smoothRadius,
+        'routeOptions' : routeOptions.toJson(),
         'sessionId' : sessionId});
 
     return RouteSession._(id: sessionId);

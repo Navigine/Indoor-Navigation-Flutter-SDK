@@ -3,7 +3,7 @@ package com.navigine.naviginesdk;
 import android.content.Context;
 
 import com.navigine.idl.java.PolylineMapObject;
-import com.navigine.view.LocationViewController;
+import com.navigine.idl.java.LocationWindow;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,22 +13,22 @@ import io.flutter.plugin.common.BinaryMessenger;
 public class PolylineMapObjectController {
   private final BinaryMessenger binaryMessenger;
   private final Context context;
-  private final LocationViewController controller;
+  private final LocationWindow locationWindow;
   private final Map<Integer, NaviginePolylineMapObject> mapObjects = new HashMap<>();
 
   @SuppressWarnings({"ConstantConditions", "unchecked"})
   public PolylineMapObjectController(
           BinaryMessenger messenger,
           Context context,
-          LocationViewController controller
+          LocationWindow locationWindow
   ) {
     this.binaryMessenger = messenger;
     this.context = context;
-    this.controller = controller;
+    this.locationWindow = locationWindow;
   }
 
   public int addPolylineMapObject() {
-    PolylineMapObject polylineMapObject = controller.addPolylineMapObject();
+    PolylineMapObject polylineMapObject = locationWindow.addPolylineMapObject();
     int polylineMapObjectId = polylineMapObject.getId();
     NaviginePolylineMapObject naviginePolylineMapObject = new NaviginePolylineMapObject(
             polylineMapObjectId,
@@ -46,7 +46,7 @@ public class PolylineMapObjectController {
       return false;
     }
 
-    boolean success = controller.removePolylineMapObject(naviginePolylineMapObject.getMapObject());
+    boolean success = locationWindow.removePolylineMapObject(naviginePolylineMapObject.getMapObject());
     mapObjects.remove(id);
     return success;
   }

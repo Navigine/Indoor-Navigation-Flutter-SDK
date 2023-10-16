@@ -24,7 +24,8 @@ class LocationView extends StatefulWidget {
     this.rotateGesturesEnabled = true,
     this.scrollGesturesEnabled = true,
     this.onMapCreated,
-    this.onSingleTap,
+    this.onTap,
+    this.onDoubleTap,
     this.onLongTap,
     this.onMapObjectPick,
     this.onMapFeaturePick,
@@ -59,7 +60,10 @@ class LocationView extends StatefulWidget {
   final OnMapFeaturePick? onMapFeaturePick;
 
   /// Called every time a [LocationView] is tapped.
-  final ArgumentCallback<Point>? onSingleTap;
+  final ArgumentCallback<Point>? onTap;
+
+    /// Called every time a [LocationView] is double tapped.
+  final ArgumentCallback<Point>? onDoubleTap;
 
   /// Called every time a [LocationView] is long tapped.
   final ArgumentCallback<Point>? onLongTap;
