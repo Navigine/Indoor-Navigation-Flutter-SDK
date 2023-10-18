@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.public_header_files = 'Classes/**/*.h'
   s.static_framework = true
   s.dependency 'Flutter'
-  s.dependency 'Navigine'
+  s.dependency 'Navigine', "2.4.1"
 
   s.ios.deployment_target = '12.0'
 end
