@@ -25,6 +25,20 @@ class RouteManager {
     return RouteSession._(id: sessionId);
   }
 
+  Future<RoutePath?> makeRoute(LocationPoint from, LocationPoint to) async {
+    final json = await _channel.invokeMethod('makeRoute', {
+      'from': from.toJson(),
+      'to': to.toJson(),
+    });
+
+    if (json == null) {
+      return null;
+    }
+    return RoutePath._fromJson(json);
+  }
+
+
+
   Future<void> cancelRouteSession(RouteSession routeSession) async {
     await _channel.invokeMethod('cancelRouteSession', {'sessionId' : routeSession.id});
   }

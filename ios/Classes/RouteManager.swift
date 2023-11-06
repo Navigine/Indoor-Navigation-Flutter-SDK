@@ -8,6 +8,7 @@ public class RouteManager: NSObject, FlutterPlugin {
     private let locationManager: NCLocationManager!
     private let navigationManager: NCNavigationManager!
     private let asyncRouteManager: NCAsyncRouteManager!
+    private let routeManager: NCRouteManager!
     private var routeSessions: [Int: NavigineRouteSession] = [:]
 
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -27,6 +28,7 @@ public class RouteManager: NSObject, FlutterPlugin {
         self.locationManager = NCNavigineSdk.getInstance()!.getLocationManager()
         self.navigationManager = NCNavigineSdk.getInstance()!.getNavigationManager(self.locationManager)
         self.asyncRouteManager = NCNavigineSdk.getInstance()!.getAsyncRouteManager(self.locationManager, navigationManager: self.navigationManager)
+        self.routeManager = NCNavigineSdk.getInstance()!.getRouteManager(self.locationManager, navigationManager: self.navigationManager)
 
         super.init()
 
@@ -35,6 +37,8 @@ public class RouteManager: NSObject, FlutterPlugin {
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
+            case "makeRoute":
+            result(makeRoute(call))
         case "createRouteSession":
             createRouteSession(call)
             result(nil)
@@ -44,6 +48,17 @@ public class RouteManager: NSObject, FlutterPlugin {
         default:
             result(FlutterMethodNotImplemented)
         }
+    }
+
+    public func makeRoute(_ call: FlutterMethodCall) -> [String: Any?]? {
+        let params = call.arguments as! [String: Any]
+        let from = Utils.locationPointFromJson(params["from"] as! [String : Any])
+        let to = Utils.locationPointFromJson(params["to"] as! [String : Any])
+        let path = self.routeManager.makeRoute(from, to: to)
+        if path == nil {
+            return nil
+        }
+        return Utils.routePathToJson(path!)
     }
 
     public func createRouteSession(_ call: FlutterMethodCall) {

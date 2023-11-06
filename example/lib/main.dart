@@ -52,6 +52,10 @@ class MainPage extends StatelessWidget with WidgetsBindingObserver {
       LocationPoint(point: Point(x: 100.0, y: 200.0), locationId: LOCATION_ID, sublocationId: SUBLOCATION_ID),
       RouteOptions(smoothRadius: 0.3, maxProjectionDistance: 1.0, maxAdvance: 1.0));
 
+    var path = routeManager.makeRoute(
+    LocationPoint(point: Point(x: 100.0, y: 200.0), locationId: LOCATION_ID, sublocationId: SUBLOCATION_ID),
+    LocationPoint(point: Point(x: 110.0, y: 210.0), locationId: LOCATION_ID, sublocationId: SUBLOCATION_ID));
+
     routeSession.setListener(RouteListener(
       onRouteAdvanced: (distance, point) async {
         print('onRouteAdvanced');

@@ -393,7 +393,7 @@ public class LocationViewController implements
     Map<String, Object> params = (Map<String, Object>) call.arguments;
     Camera camera = Utils.cameraFromJson((Map<String, Object>) params.get("camera"));
     Integer duration = (Integer) params.get("duration");
-    locationView.getLocationWindow().flyTo(camera, duration, AnimationType.NONE, null);
+    locationView.getLocationWindow().flyTo(camera, duration, null);
   }
 
   @Override

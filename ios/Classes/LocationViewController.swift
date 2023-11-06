@@ -217,7 +217,7 @@ public class LocationViewController:
         let params = call.arguments as! [String: Any]
         let camera = Utils.cameraFromJson(params["camera"] as! [String: Any])
         let duration = params["duration"] as! NSNumber
-        locationView.locationWindow.fly(to: camera, duration: duration.int32Value, animationType: NCAnimationType.none) { finished in
+        locationView.locationWindow.fly(to: camera, duration: duration.int32Value) { finished in
             let arguments: [String: Bool] = [
                 "finished": finished
             ]

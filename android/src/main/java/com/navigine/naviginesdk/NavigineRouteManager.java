@@ -12,7 +12,9 @@ import com.navigine.idl.java.LocationManager;
 import com.navigine.idl.java.NavigationManager;
 import com.navigine.idl.java.Position;
 import com.navigine.idl.java.PositionListener;
+import com.navigine.idl.java.RouteManager;
 import com.navigine.idl.java.RouteOptions;
+import com.navigine.idl.java.RoutePath;
 import com.navigine.idl.java.RouteSession;
 
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ public class NavigineRouteManager implements MethodCallHandler {
   private final LocationManager locationManager;
   private final NavigationManager navigationManager;
   private final AsyncRouteManager asyncRouteManager;
+  private final RouteManager routeManager;
   private final BinaryMessenger binaryMessenger;
   private final MethodChannel methodChannel;
   @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
@@ -38,6 +41,7 @@ public class NavigineRouteManager implements MethodCallHandler {
     locationManager = NavigineSdk.getInstance().getLocationManager();
     navigationManager = NavigineSdk.getInstance().getNavigationManager(locationManager);
     asyncRouteManager = NavigineSdk.getInstance().getAsyncRouteManager(locationManager, navigationManager);
+    routeManager = NavigineSdk.getInstance().getRouteManager(locationManager, navigationManager);
 
     binaryMessenger = messenger;
     methodChannel = new MethodChannel(messenger, "navigine_sdk/route_manager");
@@ -48,6 +52,9 @@ public class NavigineRouteManager implements MethodCallHandler {
   @SuppressWarnings({"SwitchStatementWithTooFewBranches"})
   public void onMethodCall(MethodCall call, @NonNull Result result) {
     switch (call.method) {
+      case "makeRoute":
+        result.success(makeRoute(call));
+        break;
       case "createRouteSession":
         createRouteSession(call);
         result.success(null);
@@ -60,6 +67,17 @@ public class NavigineRouteManager implements MethodCallHandler {
         result.notImplemented();
         break;
     }
+  }
+  @SuppressWarnings({"unchecked", "ConstantConditions"})
+  public Map<String, Object> makeRoute(MethodCall call) {
+    Map<String, Object> params = (Map<String, Object>) call.arguments;
+    LocationPoint from = Utils.locationPointFromJson((Map<String, Object>) params.get("from"));
+    LocationPoint to = Utils.locationPointFromJson((Map<String, Object>) params.get("to"));
+    RoutePath path = routeManager.makeRoute(from, to);
+    if (path == null) {
+      return null;
+    }
+    return Utils.routePathToJson(path);
   }
 
   @SuppressWarnings({"unchecked", "ConstantConditions"})

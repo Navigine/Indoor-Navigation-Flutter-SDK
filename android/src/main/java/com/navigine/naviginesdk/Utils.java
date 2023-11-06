@@ -181,11 +181,11 @@ public class Utils {
     }
     ArrayList<Map<String, Object>> wifis = new ArrayList<>();
     for (Wifi wifi : sublocation.getWifis()) {
-      eddystones.add(Utils.wifiToJson(wifi));
+      wifis.add(Utils.wifiToJson(wifi));
     }
     ArrayList<Map<String, Object>> venues = new ArrayList<>();
     for (Venue venue : sublocation.getVenues()) {
-      eddystones.add(Utils.venueToJson(venue));
+      venues.add(Utils.venueToJson(venue));
     }
     result.put("id", sublocation.getId());
     result.put("location", sublocation.getLocation());
