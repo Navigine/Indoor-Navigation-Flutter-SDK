@@ -36,10 +36,15 @@ class MainPage extends StatelessWidget with WidgetsBindingObserver {
       },
     ));
 
+    PolylineMapObject? polylineMapObject;
+    IconMapObject? iconMapObject;
+
     var navigationManager = NavigationManager.init();
     navigationManager.setListener(PositionListener(
       onPositionUpdated: (position) {
-        print(position);
+        if (position != null && position.locationPoint != null) {
+          iconMapObject?.setPosition(position.locationPoint!);
+        }
       },
     ));
 
@@ -48,29 +53,13 @@ class MainPage extends StatelessWidget with WidgetsBindingObserver {
     navigationManager.stopLogRecording();
 
     var routeManager = RouteManager.init();
-    var routeSession = routeManager.createRouteSession(
-      LocationPoint(point: Point(x: 100.0, y: 200.0), locationId: LOCATION_ID, sublocationId: SUBLOCATION_ID),
-      RouteOptions(smoothRadius: 0.3, maxProjectionDistance: 1.0, maxAdvance: 1.0));
+
+    RouteSession? routeSession;
 
     var path = routeManager.makeRoute(
     LocationPoint(point: Point(x: 100.0, y: 200.0), locationId: LOCATION_ID, sublocationId: SUBLOCATION_ID),
     LocationPoint(point: Point(x: 110.0, y: 210.0), locationId: LOCATION_ID, sublocationId: SUBLOCATION_ID));
 
-    routeSession.setListener(RouteListener(
-      onRouteAdvanced: (distance, point) async {
-        print('onRouteAdvanced');
-        print(distance);
-        print(point);
-
-        final routes = await routeSession.split(distance);
-        print(routes);
-      },
-      onRouteChanged: (currentPath) {
-        print('onRouteChanged');
-        print(currentPath);
-    }));
-
-    IconMapObject? iconMapObject;
     LocationViewController? viewController;
 
     return Scaffold(
@@ -100,9 +89,9 @@ class MainPage extends StatelessWidget with WidgetsBindingObserver {
                   await viewController?.setSublocationId(SUBLOCATION_ID);
 
                   iconMapObject = await viewController?.addIconMapObject();
-                  await iconMapObject?.setPosition(LocationPoint(point: Point(x: 10.0, y: 20.0), locationId: LOCATION_ID, sublocationId: SUBLOCATION_ID));
                   await iconMapObject?.setImage(BitmapDescriptor.fromAssetImage('lib/assets/place.png'));
                   await iconMapObject?.setSize(40.0, 40.0);
+                  await iconMapObject?.setStyle("{order: 1, collide: false}");
 
                   final minZoomFactor = await viewController?.getMinZoomFactor();
                   await viewController?.setMinZoomFactor(minZoomFactor! / 2);
@@ -113,6 +102,10 @@ class MainPage extends StatelessWidget with WidgetsBindingObserver {
                   final zoomFactor = await viewController?.getZoomFactor();
                   await viewController?.setZoomFactor(zoomFactor! + 2);
 
+                  polylineMapObject = await viewController?.addPolylineMapObject();
+                  await polylineMapObject?.setColor(0, 160 / 255, 0, 1);
+                  await polylineMapObject?.setWidth(2);
+                  await polylineMapObject?.setStyle("{order: 1, collide: false}");
                 },
                 onMapObjectPick: (mapObjectPickResult, screenPosition) {
                   print('onMapObjectPick');
@@ -130,6 +123,39 @@ class MainPage extends StatelessWidget with WidgetsBindingObserver {
                   final pointMeters = await viewController?.screenPositionToMeters(point);
                   final screenMeters = await viewController?.metersToScreenPosition(pointMeters!, false);
                   await viewController?.flyToCamera(Camera(point: pointMeters!, zoom: 11, rotation: 0), 2);
+
+                  var routeSession = routeManager.createRouteSession(
+                    LocationPoint(point: pointMeters!, locationId: LOCATION_ID, sublocationId: SUBLOCATION_ID),
+                    RouteOptions(smoothRadius: 0.3, maxProjectionDistance: 1.0, maxAdvance: 1.0));
+
+                  routeSession.setListener(RouteListener(
+                    onRouteAdvanced: (distance, point) async {
+                      print('onRouteAdvanced');
+                      print(distance);
+                      print(point);
+
+                      if (routeSession != null) {
+                        final routes = await routeSession.split(distance);
+                        if (routes.length < 2) {
+                          return;
+                        }
+
+                        final route = routes[1];
+
+                        late List<Point> points = [];
+                        for (final locationPoint in route.points) {
+                          points.add(locationPoint.point);
+                        }
+
+                        final locationPolyline = LocationPolyline(polyline: Polyline(points: points), locationId: LOCATION_ID, sublocationId: SUBLOCATION_ID);
+
+                        await polylineMapObject?.setPolyLine(locationPolyline);
+                      }
+                    },
+                    onRouteChanged: (currentPath) {
+                      print('onRouteChanged');
+                      print(currentPath);
+                  }));
                 },
                 onTap: (Point point) {
                   print('onTap');

@@ -34,7 +34,7 @@ class Utils {
 
     static func locationPolylineFromJson(_ json: [String: Any]) -> NCLocationPolyline {
         return NCLocationPolyline(
-            polyline: polylineFromJson(json["polyline"] as! [String: NSNumber]),
+            polyline: polylineFromJson(json["polyline"] as! [String: Any]),
             locationId: (json["locationId"] as! NSNumber).int32Value,
             sublocationId: (json["sublocationId"] as! NSNumber).int32Value
         )
