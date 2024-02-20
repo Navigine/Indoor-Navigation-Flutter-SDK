@@ -5,7 +5,7 @@ public class NavigineRouteSession: NSObject, NCAsyncRouteListener {
     private var id: Int
     private var session: NCRouteSession
     private let methodChannel: FlutterMethodChannel!
-    
+
     private var currentRoutePath: NCRoutePath?
 
     public required init(
@@ -15,19 +15,19 @@ public class NavigineRouteSession: NSObject, NCAsyncRouteListener {
     ) {
         self.id = id
         self.session = session
-        
+
         methodChannel = FlutterMethodChannel(
             name: "navigine_sdk/navigine_route_session_\(id)",
             binaryMessenger: registrar.messenger()
         )
-        
+
         super.init()
         weak var weakSelf = self
         self.methodChannel.setMethodCallHandler({ weakSelf?.handle($0, result: $1) })
 
-        self.session.add(self)
+        self.session.add(weakSelf)
     }
-    
+
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
         case "split":
@@ -36,11 +36,11 @@ public class NavigineRouteSession: NSObject, NCAsyncRouteListener {
             result(FlutterMethodNotImplemented)
         }
     }
-    
+
     public func split(_ call: FlutterMethodCall) -> [[String: Any?]] {
         let params = call.arguments as! [String: Any]
         let distance = params["distance"] as! NSNumber
-        
+
         var paths = [[String: Any?]]()
         if currentRoutePath != nil {
             for path in currentRoutePath!.split(distance.floatValue) {
@@ -51,11 +51,15 @@ public class NavigineRouteSession: NSObject, NCAsyncRouteListener {
         return paths
     }
 
-    
+    public func unsubscribe() {
+        self.session.remove(self)
+    }
+
+
     public func getSession() -> NCRouteSession {
         return self.session
     }
-    
+
     public func onRouteChanged(_ currentPath: NCRoutePath?) {
         var arguments: [String: Any?] = [:]
         if (currentPath != nil) {
@@ -66,7 +70,7 @@ public class NavigineRouteSession: NSObject, NCAsyncRouteListener {
         currentRoutePath = currentPath
         methodChannel.invokeMethod("onRouteChanged", arguments: arguments)
     }
-    
+
     public func onRouteAdvanced(_ distance: Float, point: NCLocationPoint) {
         let arguments = [
             "distance": distance,

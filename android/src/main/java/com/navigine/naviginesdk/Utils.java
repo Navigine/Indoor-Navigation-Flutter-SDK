@@ -37,8 +37,8 @@ public class Utils {
   public static Polyline polylineFromJson(Map<String, Object> json) {
     ArrayList<Point> points = new ArrayList<>();
 
-    for (Map<String, Object> jsonPoint : (Map<String, Object>[]) json.get("points")){
-      points.add(pointFromJson(jsonPoint));
+    for (Object jsonPoint : (ArrayList<Object>)json.get("points")) {
+      points.add(pointFromJson((Map<String, Object>) jsonPoint));
     }
     return new Polyline(points);
   }

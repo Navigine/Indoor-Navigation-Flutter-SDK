@@ -73,7 +73,7 @@ import Navigine
 
 ### Initializing for Android
 
-1. Add dependency `implementation 'com.github.Navigine:Indoor-Navigation-Android-Mobile-SDK-2.0:20230213'` to `android/app/build.gradle`
+1. Add dependency `implementation 'com.github.Navigine:Indoor-Navigation-Android-Mobile-SDK-2.0:20240125'` to `android/app/build.gradle`
 2. Add permissions `<uses-permission android:name="android.permission.INTERNET"/> <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> <uses-permission android:name="android.permission.BLUETOOTH" /> <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" /> <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />` to `android/app/src/main/AndroidManifest.xml`
 3. Add `import com.navigine.idl.java.NavigineSdk;` and `import com.navigine.sdk.Navigine;` to `android/app/src/main/.../MainActivity.java`/`android/app/src/main/.../MainActivity.kt`
 4. `Navigine.initialize(getApplicationContext());` and `NavigineSdk.setUserHash("Your user hash");` inside method `configureFlutterEngine` in `android/app/src/main/.../MainActivity.java`/`android/app/src/main/.../MainActivity.kt`
@@ -83,7 +83,7 @@ import Navigine
 
 ```groovy
 dependencies {
-    implementation 'com.github.Navigine:Indoor-Navigation-Android-Mobile-SDK-2.0:20230213'
+    implementation 'com.github.Navigine:Indoor-Navigation-Android-Mobile-SDK-2.0:20240125'
 }
 ```
 
@@ -112,4 +112,3 @@ public class MainActivity extends FlutterActivity {
 ### Usage
 
 For usage examples refer to example [app](https://github.com/Navigine/Indoor-Navigation-Flutter-SDK/tree/master/example)
-

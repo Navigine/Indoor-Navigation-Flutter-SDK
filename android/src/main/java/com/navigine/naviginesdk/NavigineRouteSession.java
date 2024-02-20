@@ -21,6 +21,7 @@ public class NavigineRouteSession implements MethodChannel.MethodCallHandler {
   private final MethodChannel methodChannel;
 
   private RoutePath currentRoutePath = null;
+  private AsyncRouteListener asyncRouteListener = null;
 
   public NavigineRouteSession(
     int id,
@@ -33,7 +34,7 @@ public class NavigineRouteSession implements MethodChannel.MethodCallHandler {
     methodChannel = new MethodChannel(messenger, "navigine_sdk/navigine_route_session_" + id);
     methodChannel.setMethodCallHandler(this);
 
-    this.session.addRouteListener(new AsyncRouteListener() {
+    asyncRouteListener = new AsyncRouteListener() {
       @Override
       public void onRouteChanged(RoutePath routePath) {
         Map<String, Object> arguments = new HashMap<>();
@@ -46,16 +47,22 @@ public class NavigineRouteSession implements MethodChannel.MethodCallHandler {
 
       @Override
       public void onRouteAdvanced(float v, LocationPoint locationPoint) {
-       Map<String, Object> arguments = new HashMap<>();
-       arguments.put("distance", v);
-       arguments.put("locationPoint", Utils.locationPointToJson(locationPoint));
-       methodChannel.invokeMethod("onRouteAdvanced", arguments);
+        Map<String, Object> arguments = new HashMap<>();
+        arguments.put("distance", v);
+        arguments.put("locationPoint", Utils.locationPointToJson(locationPoint));
+        methodChannel.invokeMethod("onRouteAdvanced", arguments);
       }
-    });
+    };
+
+    this.session.addRouteListener(asyncRouteListener);
   }
 
   public RouteSession getSession() {
     return this.session;
+  }
+
+  public void unsubscribe() {
+    this.session.removeRouteListener(asyncRouteListener);
   }
 
   @Override

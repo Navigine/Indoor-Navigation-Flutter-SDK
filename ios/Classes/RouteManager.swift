@@ -70,10 +70,10 @@ public class RouteManager: NSObject, FlutterPlugin {
         let session = self.asyncRouteManager.createRouteSession(locationPoint, routeOptions: routeOptions)
 
         routeSessions[sessionId] = NavigineRouteSession(
-          id: sessionId,
-          session: session!,
-          registrar: pluginRegistrar
-        )
+            id: sessionId,
+            session: session!,
+            registrar: pluginRegistrar
+          )
     }
 
     public func cancelRouteSession(_ call: FlutterMethodCall) {
@@ -81,6 +81,7 @@ public class RouteManager: NSObject, FlutterPlugin {
         let sessionId = params["sessionId"] as! Int
         let routeSession = routeSessions[sessionId]
         if (routeSession != nil) {
+            routeSession?.unsubscribe()
             self.asyncRouteManager.cancel(routeSession?.getSession())
             routeSessions.removeValue(forKey: sessionId)
         }
