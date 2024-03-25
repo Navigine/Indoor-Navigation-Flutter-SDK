@@ -155,6 +155,7 @@ public class Utils {
 
   public static Map<String, Object> venueToJson(Venue venue) {
     Map<String, Object> result = new HashMap<>();
+    result.put("id", venue.getId());
     result.put("point", pointToJson(venue.getPoint()));
     result.put("locationId", venue.getLocationId());
     result.put("sublocationId", venue.getSublocationId());

@@ -39,7 +39,7 @@ class Utils {
             sublocationId: (json["sublocationId"] as! NSNumber).int32Value
         )
     }
-    
+
     static func routeOptionsFromJson(_ json: [String: Any]) -> NCRouteOptions {
         return NCRouteOptions(
             smoothRadius: (json["smoothRadius"] as! NSNumber),
@@ -140,6 +140,7 @@ class Utils {
 
     static func venueToJson(_ venue: NCVenue) -> [String: Any?] {
         return [
+            "id" : venue.id,
             "point" : pointToJson(venue.point),
             "locationId" : venue.locationId,
             "sublocationId" : venue.sublocationId,
