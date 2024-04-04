@@ -63,8 +63,8 @@ class MainPage extends StatelessWidget with WidgetsBindingObserver {
     RouteSession? routeSession;
 
     var path = routeManager.makeRoute(
-    LocationPoint(point: Point(x: 100.0, y: 200.0), locationId: LOCATION_ID, sublocationId: SUBLOCATION_ID),
-    LocationPoint(point: Point(x: 110.0, y: 210.0), locationId: LOCATION_ID, sublocationId: SUBLOCATION_ID));
+      LocationPoint(point: Point(x: 100.0, y: 200.0), locationId: LOCATION_ID, sublocationId: SUBLOCATION_ID),
+      LocationPoint(point: Point(x: 110.0, y: 210.0), locationId: LOCATION_ID, sublocationId: SUBLOCATION_ID));
 
     LocationViewController? viewController;
 
@@ -118,12 +118,12 @@ class MainPage extends StatelessWidget with WidgetsBindingObserver {
                   await polylineMapObject?.setWidth(2);
                   await polylineMapObject?.setStyle("{order: 1, collide: false}");
                 },
-                onMapObjectPick: (mapObjectPickResult, screenPosition) {
+                onMapObjectPick: (mapObjectPickResult, screenPosition) async {
                   print('onMapObjectPick');
                   print(mapObjectPickResult);
                   print(screenPosition);
                 },
-                onMapFeaturePick: (mapFeaturePickResult, screenPosition) {
+                onMapFeaturePick: (mapFeaturePickResult, screenPosition) async {
                   print('onMapFeaturePick');
                   print(mapFeaturePickResult);
                   print(screenPosition);
@@ -163,22 +163,22 @@ class MainPage extends StatelessWidget with WidgetsBindingObserver {
                         await polylineMapObject?.setPolyLine(locationPolyline);
                       }
                     },
-                    onRouteChanged: (currentPath) {
+                    onRouteChanged: (currentPath) async {
                       print('onRouteChanged');
                       print(currentPath);
                   }));
                 },
-                onTap: (Point point) {
+                onTap: (Point point) async {
                   print('onTap');
                   print(point);
                   viewController?.pickMapObjectAt(point);
                   viewController?.pickMapFeatureAt(point);
                 },
-                onDoubleTap: (Point point) {
+                onDoubleTap: (Point point) async {
                   print('onDoubleTap');
                   print(point);
                 },
-                onCameraAnimation: (finished) {
+                onCameraAnimation: (finished) async {
                   print(finished);
                 },
               )

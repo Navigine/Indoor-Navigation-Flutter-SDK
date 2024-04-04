@@ -226,8 +226,11 @@ class LocationViewController extends ChangeNotifier {
       return;
     }
 
+    Map<String, String> mapFeaturePickResult =
+      (arguments['mapFeaturePickResult'] as Map<dynamic, dynamic>).map((key, value) => MapEntry(key.toString(), value.toString() ));
+
     _locationViewState.widget.onMapFeaturePick!(
-      arguments['mapFeaturePickResult'],
+      mapFeaturePickResult,
       Point._fromJson(arguments['screenPosition']));
   }
 

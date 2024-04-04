@@ -1,6 +1,6 @@
 name: navigine_sdk
 description: A Flutter plugin for integrating NavigineSDK in Android and iOS applications.
-version: 3.3.2
+version: 3.3.3
 homepage: https://github.com/Navigine/navigine_flutter
 
 environment:
