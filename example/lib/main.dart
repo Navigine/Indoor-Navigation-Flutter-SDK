@@ -18,6 +18,10 @@ class MainPage extends StatelessWidget with WidgetsBindingObserver {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: text));
   }
 
+  void _hideMessage(BuildContext context) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+  }
+
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addObserver(this);
@@ -28,6 +32,8 @@ class MainPage extends StatelessWidget with WidgetsBindingObserver {
         print(location);
       },
     ));
+
+    locationManager.setLocationId(LOCATION_ID);
 
     var locationListManager = LocationListManager.init();
     locationListManager.setListener(LocationListListener(
@@ -72,21 +78,23 @@ class MainPage extends StatelessWidget with WidgetsBindingObserver {
               child: LocationView(
                 onMapCreated: (LocationViewController locationViewController) async {
                   viewController = locationViewController;
-                  if (await locationPermissionNotGranted) {
+                  if (!(await Permission.location.isGranted)) {
                     _showMessage(context, Text('Location permission was NOT granted'));
+                  } else {
+                    _hideMessage(context);
                   }
 
-                  if (await bluetoothscanPermissionNotGranted) {
+                  if (!(await Permission.bluetoothScan.isGranted )) {
                     _showMessage(context, Text('Bluetooth scan permission was NOT granted'));
+                  } else {
+                    _hideMessage(context);
                   }
 
-                  if (await bluetoothPermissionNotGranted) {
+                  if (!(await Permission.bluetoothConnect.isGranted )) {
                     _showMessage(context, Text('Bluetooth permission was NOT granted'));
+                  } else {
+                    _hideMessage(context);
                   }
-
-                  await locationManager.setLocationId(LOCATION_ID);
-                  // final locationId = await locationManager.getLocationId();
-                  await viewController?.setSublocationId(SUBLOCATION_ID);
 
                   iconMapObject = await viewController?.addIconMapObject();
                   await iconMapObject?.setImage(BitmapDescriptor.fromAssetImage('lib/assets/place.png'));
@@ -100,7 +108,10 @@ class MainPage extends StatelessWidget with WidgetsBindingObserver {
                   await viewController?.setMaxZoomFactor(maxZoomFactor! * 2);
 
                   final zoomFactor = await viewController?.getZoomFactor();
-                  await viewController?.setZoomFactor(zoomFactor! + 2);
+                  await viewController?.setZoomFactor(zoomFactor! * 2);
+
+                  // final locationId = await locationManager.getLocationId();
+                  await viewController?.setSublocationId(SUBLOCATION_ID);
 
                   polylineMapObject = await viewController?.addPolylineMapObject();
                   await polylineMapObject?.setColor(0, 160 / 255, 0, 1);
