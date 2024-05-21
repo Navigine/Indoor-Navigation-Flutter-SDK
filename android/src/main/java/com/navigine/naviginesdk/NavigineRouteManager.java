@@ -103,6 +103,7 @@ public class NavigineRouteManager implements MethodCallHandler {
 
     NavigineRouteSession routeSession = routeSessions.get(sessionId);
     if (routeSession != null) {
+      routeSession.unsubscribe();
       asyncRouteManager.cancelRouteSession(routeSession.getSession());
       routeSessions.remove(sessionId);
     }

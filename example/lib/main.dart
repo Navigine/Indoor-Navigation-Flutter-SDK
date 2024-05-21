@@ -113,10 +113,7 @@ class MainPage extends StatelessWidget with WidgetsBindingObserver {
                   // final locationId = await locationManager.getLocationId();
                   await viewController?.setSublocationId(SUBLOCATION_ID);
 
-                  polylineMapObject = await viewController?.addPolylineMapObject();
-                  await polylineMapObject?.setColor(0, 160 / 255, 0, 1);
-                  await polylineMapObject?.setWidth(2);
-                  await polylineMapObject?.setStyle("{order: 1, collide: false}");
+
                 },
                 onMapObjectPick: (mapObjectPickResult, screenPosition) async {
                   print('onMapObjectPick');
@@ -132,26 +129,31 @@ class MainPage extends StatelessWidget with WidgetsBindingObserver {
                   print('onLongTap');
                   print(point);
                   final pointMeters = await viewController?.screenPositionToMeters(point);
-                  final screenMeters = await viewController?.metersToScreenPosition(pointMeters!, false);
-                  await viewController?.flyToCamera(Camera(point: pointMeters!, zoom: 11, rotation: 0), 2);
+                  // final screenMeters = await viewController?.metersToScreenPosition(pointMeters!, false);
+                  // await viewController?.flyToCamera(Camera(point: pointMeters!, zoom: 11, rotation: 0), 2);
 
-                  var routeSession = routeManager.createRouteSession(
+                  routeSession = routeManager.createRouteSession(
                     LocationPoint(point: pointMeters!, locationId: LOCATION_ID, sublocationId: SUBLOCATION_ID),
                     RouteOptions(smoothRadius: 0.3, maxProjectionDistance: 10.0, maxAdvance: 5.0));
 
-                  routeSession.setListener(RouteListener(
+                  polylineMapObject = await viewController?.addPolylineMapObject();
+                  await polylineMapObject?.setColor(0, 160 / 255, 0, 1);
+                  await polylineMapObject?.setWidth(2);
+                  await polylineMapObject?.setStyle("{order: 1, collide: false}");
+
+                  routeSession?.setListener(RouteListener(
                     onRouteAdvanced: (distance, point) async {
                       print('onRouteAdvanced');
                       print(distance);
                       print(point);
 
                       if (routeSession != null) {
-                        final routes = await routeSession.split(distance);
-                        if (routes.length < 2) {
+                        final routes = await routeSession?.split(distance);
+                        if (routes!.length < 2) {
                           return;
                         }
 
-                        final route = routes[1];
+                        final route = routes![1];
 
                         late List<Point> points = [];
                         for (final locationPoint in route.points) {
@@ -177,6 +179,14 @@ class MainPage extends StatelessWidget with WidgetsBindingObserver {
                 onDoubleTap: (Point point) async {
                   print('onDoubleTap');
                   print(point);
+                  if (routeSession != null) {
+                    await routeManager.cancelRouteSession(routeSession!);
+                    if (polylineMapObject != null) {
+                      await viewController?.removePolylineMapObject(
+                          polylineMapObject!);
+                    }
+                  }
+
                 },
                 onCameraAnimation: (finished) async {
                   print(finished);
